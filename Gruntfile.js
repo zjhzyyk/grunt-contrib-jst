@@ -135,6 +135,14 @@ module.exports = function(grunt) {
         files: {
           "tmp/local_scope.js": ["test/fixtures/template_local_scope.html"]
         }
+      },
+      commonjs: {
+        options: {
+          commonjs: true
+        },
+        files: {
+          "tmp/commonjs.js": ["test/fixtures/template_local_scope.html"]
+        }
       }
     },
 

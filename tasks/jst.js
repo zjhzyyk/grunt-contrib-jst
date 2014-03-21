@@ -61,13 +61,16 @@ module.exports = function(grunt) {
         if (options.amd && options.namespace === false) {
           return 'return ' + compiled;
         }
+        if (options.commonjs) {
+          return 'templates['+JSON.stringify(filename)+'] = '+compiled+';';
+        }
         return nsInfo.namespace+'['+JSON.stringify(filename)+'] = '+compiled+';';
       });
 
       if (output.length < 1) {
         grunt.log.warn('Destination not written because compiled files were empty.');
       } else {
-        if (options.namespace !== false) {
+        if (options.namespace !== false && !options.commonjs) {
           output.unshift(nsInfo.declaration);
         }
         if (options.amd) {
@@ -83,6 +86,12 @@ module.exports = function(grunt) {
             output.push("  return " + nsInfo.namespace + ";");
           }
           output.push("});");
+        }
+        if (options.commonjs) {
+          output.unshift("var templates = {};");
+          output.unshift("module.exports = function(_){");
+          output.push("return templates;");
+          output.push("};");
         }
         grunt.file.write(f.dest, output.join(grunt.util.normalizelf(options.separator)));
         grunt.log.writeln('File ' + chalk.cyan(f.dest) + ' created.');
